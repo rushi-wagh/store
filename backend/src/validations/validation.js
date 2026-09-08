@@ -41,3 +41,15 @@ export const ratingSchema = z.object({
     .max(400, "Comment must be less than 400 characters")
     .optional(),
 });
+
+export const passwordSchema = z.object({
+  oldPassword: z
+    .string()
+    .min(8, "Old password must be at least 8 characters") ,
+  newPassword: z
+    .string()
+    .min(8, "New password must be at least 8 characters")
+    .max(16, "New password must be less than 16 characters")
+    .regex(/[A-Z]/, "Password must contain an uppercase letter")
+    .regex(/[a-z]/, "Password must contain a lowercase letter"),
+});
