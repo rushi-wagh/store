@@ -5,11 +5,55 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  STORE_OWNER
+  SYSTEM_ADMINISTRATOR
+}
+
+model User{
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  address  String
+  role      Role     @default(USER) 
+  stores    Store[]
+  rating    Rating[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+model Store{
+  id        Int      @id @default(autoincrement())
+  name      String
+  address   String
+  email     String   @unique
+  ownerId   Int
+  owner     User     @relation(fields: [ownerId], references: [id])
+  rating    Rating[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Rating{
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  comment   String?
+  userId    Int
+  storeId   Int
+  user      User     @relation(fields: [userId], references: [id])
+  store     Store    @relation(fields: [storeId], references: [id])
+  @@unique([userId, storeId])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
