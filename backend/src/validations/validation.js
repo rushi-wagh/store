@@ -42,6 +42,7 @@ export const ratingSchema = z.object({
     .string()
     .max(400, "Comment must be less than 400 characters")
     .optional(),
+    storeId: z.number().int(),
 });
 
 export const passwordSchema = z.object({
