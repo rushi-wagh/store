@@ -16,7 +16,7 @@ export const userSchema = z.object({
     .max(16, "Password must be less than 16 characters")
     .regex(/[A-Z]/, "Password must contain an uppercase letter")
     .regex(/[a-z]/, "Password must contain a lowercase letter"),
-  role: z.enum(["SYSTEM_ADMINISTRATOR", "STORE_OWNER", "USER"]),
+  role: z.enum(["SYSTEM_ADMINISTRATOR", "STORE_OWNER", "USER"]).optional(),
 });
 
 export const storeSchema = z.object({

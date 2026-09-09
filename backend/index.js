@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 // import routes
 import authRoutes from "./src/routes/auth.route.js";
 import adminRoutes from "./src/routes/admin.route.js";
+import storeRoutes from "./src/routes/store.route.js";
 
 const app = express();
 app.use(cors());
@@ -23,6 +24,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/auth", authRoutes); 
 app.use("/api/v1/admin", adminRoutes);
+app.use("/api/v1/store", storeRoutes);
 
 const port = process.env.PORT || 8080;
 
