@@ -16,11 +16,7 @@ export const userSchema = z.object({
     .max(16, "Password must be less than 16 characters")
     .regex(/[A-Z]/, "Password must contain an uppercase letter")
     .regex(/[a-z]/, "Password must contain a lowercase letter"),
-    role: z.enum([
-    "SYSTEM_ADMINISTRATOR",
-    "STORE_OWNER",
-    "USER",
-  ]),
+  role: z.enum(["SYSTEM_ADMINISTRATOR", "STORE_OWNER", "USER"]),
 });
 
 export const storeSchema = z.object({
@@ -33,6 +29,7 @@ export const storeSchema = z.object({
     .string()
     .min(1, "Address must be at least 1 character")
     .max(400, "Address must be less than 400 characters"),
+  ownerId: z.number().int(),
 });
 
 export const ratingSchema = z.object({
@@ -48,9 +45,7 @@ export const ratingSchema = z.object({
 });
 
 export const passwordSchema = z.object({
-  oldPassword: z
-    .string()
-    .min(8, "Old password must be at least 8 characters") ,
+  oldPassword: z.string().min(8, "Old password must be at least 8 characters"),
   newPassword: z
     .string()
     .min(8, "New password must be at least 8 characters")
