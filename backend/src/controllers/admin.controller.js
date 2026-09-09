@@ -4,6 +4,31 @@ import { hashPassword } from "../utils/password_utils.js";
 
 export const getAllUsers = async (req, res) => {
   try {
+    const {
+      sortBy = "name",
+      order = "asc",
+    } = req.query;
+
+    const allowedSortFields = [
+      "name",
+      "email",
+      "address",
+      "role",
+      "createdAt",
+    ];
+
+    if (!allowedSortFields.includes(sortBy)) {
+      return res.status(400).json({
+        message: "Invalid sort field",
+      });
+    }
+
+    if (!["asc", "desc"].includes(order)) {
+      return res.status(400).json({
+        message: "Invalid sort order",
+      });
+    }
+
     const users = await prisma.user.findMany({
       select: {
         id: true,
@@ -15,12 +40,17 @@ export const getAllUsers = async (req, res) => {
         rating: true,
         createdAt: true,
       },
+      orderBy: {
+        [sortBy]: order,
+      },
     });
+
     return res.status(200).json({
       message: "Users fetched successfully",
       users,
     });
   } catch (error) {
+
     return res.status(500).json({
       message: "Internal server error",
     });
@@ -33,7 +63,7 @@ export const addUser = async (req, res) => {
     if (!validate.success) {
       return res.status(400).json({
         message: "Validation error",
-        errors: validate.error.errors,
+        errors: validate.error.issues,
       });
     }
     const { name, email, password, address, role } = validate.data;
@@ -105,7 +135,7 @@ export const addStore = async(req,res) => {
      if (!validate.success) {
       return res.status(400).json({
         message: "Validation error",
-        errors: validate.error.errors,
+        errors: validate.error.issues,
       });
     }
     const{name,email,address,ownerId} = validate.data;

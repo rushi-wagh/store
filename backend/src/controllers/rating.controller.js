@@ -7,7 +7,7 @@ export const addRating = async (req, res) => {
     if (!validate.success) {
       return res.status(400).json({
         message: "Validation error",
-        errors: validate.error.errors,
+        errors: validate.error.issues,
       });
     }
     const { rating, storeId, comment } = validate.data;
@@ -62,6 +62,22 @@ export const getRatingsForStore = async (req, res) => {
       });
     }
 
+    const { sortBy = "rating", order = "desc" } = req.query;
+
+    const allowedSortFields = ["rating", "createdAt"];
+
+    if (!allowedSortFields.includes(sortBy)) {
+      return res.status(400).json({
+        message: "Invalid sort field",
+      });
+    }
+
+    if (!["asc", "desc"].includes(order)) {
+      return res.status(400).json({
+        message: "Invalid sort order",
+      });
+    }
+
     const store = await prisma.store.findUnique({
       where: {
         id: storeId,
@@ -76,10 +92,13 @@ export const getRatingsForStore = async (req, res) => {
 
     const ratings = await prisma.rating.findMany({
       where: {
-        storeId: storeId,
+        storeId,
       },
       include: {
         user: true,
+      },
+      orderBy: {
+        [sortBy]: order,
       },
     });
 
@@ -102,7 +121,7 @@ export const updateRating = async (req, res) => {
     if (!validate.success) {
       return res.status(400).json({
         message: "Validation error",
-        errors: validate.error.errors,
+        errors: validate.error.issues,
       });
     }
     const { rating, comment } = req.body;

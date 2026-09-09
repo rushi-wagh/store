@@ -11,7 +11,7 @@ export const registerUser = async (req, res) => {
     
       return res.status(400).json({
         message: "Invalid user data",
-        errors: validateUser.error.errors,
+        errors: validateUser.error.issues,
       });
     }
 
@@ -59,7 +59,7 @@ export const loginUser = async (req, res) => {
     if (!validateUser.success) {
       return res.status(400).json({
         message: "Invalid user data",
-        errors: validateUser.error.errors,
+        errors: validateUser.error.issues,
       });
     }
 
@@ -155,7 +155,7 @@ export const changePassword = async (req, res) => {
     if (!validate.success) {
       return res.status(400).json({
         message: "Invalid password data",
-        errors: validate.error.errors,
+        errors: validate.error.issues,
       });
     }
 
