@@ -11,7 +11,13 @@ export const getAllUsers = async (req, res) => {
       order = "asc",
     } = req.query;
 
-    const allowedSortFields = ["name", "email", "address", "role", "createdAt"];
+    const allowedSortFields = [
+      "name",
+      "email",
+      "address",
+      "role",
+      "createdAt",
+    ];
 
     if (!allowedSortFields.includes(sortBy)) {
       return res.status(400).json({
@@ -61,8 +67,15 @@ export const getAllUsers = async (req, res) => {
         email: true,
         address: true,
         role: true,
-        stores: true,
-        rating: true,
+        stores: {
+          include: {
+            rating: {
+              select: {
+                rating: true,
+              },
+            },
+          },
+        },
         createdAt: true,
       },
       orderBy: {
@@ -70,9 +83,31 @@ export const getAllUsers = async (req, res) => {
       },
     });
 
+    const usersWithRating = users.map((user) => {
+      let averageRating = 0;
+
+      if (user.role === "STORE_OWNER" && user.stores.length > 0) {
+        const ratings = user.stores[0].rating;
+
+        if (ratings.length > 0) {
+          const total = ratings.reduce(
+            (sum, rating) => sum + rating.rating,
+            0
+          );
+
+          averageRating = total / ratings.length;
+        }
+      }
+
+      return {
+        ...user,
+        averageRating,
+      };
+    });
+
     return res.status(200).json({
       message: "Users fetched successfully",
-      users,
+      users: usersWithRating,
     });
   } catch (error) {
     console.log(error);
@@ -86,22 +121,28 @@ export const getAllUsers = async (req, res) => {
 export const addUser = async (req, res) => {
   try {
     const validate = userSchema.safeParse(req.body);
+
     if (!validate.success) {
       return res.status(400).json({
         message: "Validation error",
         errors: validate.error.issues,
       });
     }
+
     const { name, email, password, address, role } = validate.data;
+
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
+
     if (existingUser) {
       return res.status(409).json({
         message: "User already exists",
       });
     }
+
     const hashedPassword = await hashPassword(password);
+
     const user = await prisma.user.create({
       data: {
         name,
@@ -114,6 +155,7 @@ export const addUser = async (req, res) => {
         password: true,
       },
     });
+
     return res.status(201).json({
       message: "User created successfully",
       user,
@@ -163,11 +205,17 @@ export const getUser = async (req, res) => {
 
     let averageRating = 0;
 
-    if (user.role === "STORE_OWNER" && user.stores.length > 0) {
+    if (
+      user.role === "STORE_OWNER" &&
+      user.stores.length > 0
+    ) {
       const ratings = user.stores[0].rating;
 
       if (ratings.length > 0) {
-        const total = ratings.reduce((sum, rating) => sum + rating.rating, 0);
+        const total = ratings.reduce(
+          (sum, rating) => sum + rating.rating,
+          0
+        );
 
         averageRating = total / ratings.length;
       }
@@ -190,29 +238,36 @@ export const getUser = async (req, res) => {
 export const addStore = async (req, res) => {
   try {
     const validate = storeSchema.safeParse(req.body);
+
     if (!validate.success) {
       return res.status(400).json({
         message: "Validation error",
         errors: validate.error.issues,
       });
     }
+
     const { name, email, address, ownerId } = validate.data;
+
     const user = await prisma.user.findUnique({
       where: { id: ownerId },
     });
+
     if (!user || user.role !== "STORE_OWNER") {
       return res.status(400).json({
         message: "User is not a store owner",
       });
     }
+
     const existingStore = await prisma.store.findUnique({
       where: { email },
     });
+
     if (existingStore) {
       return res.status(409).json({
         message: "There exists store with this email",
       });
     }
+
     const store = await prisma.store.create({
       data: {
         name,
@@ -221,6 +276,7 @@ export const addStore = async (req, res) => {
         ownerId,
       },
     });
+
     return res.status(201).json({
       message: "Store created successfully",
       store,
@@ -234,9 +290,18 @@ export const addStore = async (req, res) => {
 
 export const getStores = async (req, res) => {
   try {
-    const { search = "", sortBy = "name", order = "asc" } = req.query;
+    const {
+      search = "",
+      sortBy = "name",
+      order = "asc",
+    } = req.query;
 
-    const allowedSortFields = ["name", "email", "address", "createdAt"];
+    const allowedSortFields = [
+      "name",
+      "email",
+      "address",
+      "createdAt",
+    ];
 
     if (!allowedSortFields.includes(sortBy)) {
       return res.status(400).json({
@@ -290,11 +355,13 @@ export const getStores = async (req, res) => {
     const storesWithRating = stores.map((store) => {
       const total = store.rating.reduce(
         (sum, rating) => sum + rating.rating,
-        0,
+        0
       );
 
       const averageRating =
-        store.rating.length > 0 ? total / store.rating.length : 0;
+        store.rating.length > 0
+          ? total / store.rating.length
+          : 0;
 
       return {
         ...store,
