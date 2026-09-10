@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.post("/register",registerUser);
 router.post("/login",loginUser);
-router.get("/logout",isLoggedIn,logoutUser);
+router.post("/logout",isLoggedIn,logoutUser);
 router.get("/",isLoggedIn,getMe);
 router.patch("/update-password",isLoggedIn,changePassword);
 
