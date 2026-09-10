@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import AppRoutes from "./routes/Approutes";
 import useAuthStore from "./store/authStore";
+import NavBar from "./components/NavBar";
 
 const App = () => {
   const checkAuth = useAuthStore((state) => state.checkAuth);

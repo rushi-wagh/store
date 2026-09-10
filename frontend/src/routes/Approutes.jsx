@@ -3,6 +3,8 @@ import Landing from "../pages/landing";
 import Login from "../pages/login";
 import Register from "../pages/register";
 import ChangePassword from "../pages/change-password";
+import OwnerDashboard from "../pages/owner-dashboard";
+import ProtectedRoute from "../components/ProtectedRoute";
 
 
 const AppRoutes = () => {
@@ -11,7 +13,19 @@ const AppRoutes = () => {
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
-      <Route path ="/change-password" element={<ChangePassword />} />
+      <Route path ="/change-password" element={
+        <ProtectedRoute>
+          <ChangePassword />
+        </ProtectedRoute>
+      } />
+      <Route
+        path="/owner-dashboard"
+        element={
+          <ProtectedRoute>
+            <OwnerDashboard />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 };
