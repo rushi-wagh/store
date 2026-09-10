@@ -66,7 +66,13 @@ export const loginUser = async (req, res) => {
     const { email, password } = validateUser.data;
 
     const user = await prisma.user.findUnique({
+      where: { email }
+    });
+     const returnedUser = await prisma.user.findUnique({
       where: { email },
+      omit :{
+        password: true,
+      }
     });
 
     if (!user) {
@@ -94,8 +100,10 @@ export const loginUser = async (req, res) => {
 
     return res.status(200).json({
       message: "User logged in successfully",
+      returnedUser
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       message: "Internal server error",
     });

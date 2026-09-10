@@ -43,9 +43,11 @@ const useAuthStore = create((set) => ({
     try {
       const response = await api.post("/auth/login", data);
 
-      set({ authUser: response.data.user });
+      set({ authUser: response.data.returnedUser });
+
+      
     } catch (error) {
-      console.log(error);
+      throw error;
     } finally {
       set({ isLoggingIn: false });
     }
@@ -53,9 +55,13 @@ const useAuthStore = create((set) => ({
 
   logout: async () => {
     try {
-      await api.post("/auth/logout", {}, {
-        withCredentials: true,
-      });
+      await api.post(
+        "/auth/logout",
+        {},
+        {
+          withCredentials: true,
+        },
+      );
 
       set({ authUser: null });
     } catch (error) {

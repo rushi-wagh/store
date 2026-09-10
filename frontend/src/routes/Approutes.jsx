@@ -21,7 +21,7 @@ const AppRoutes = () => {
       <Route
         path="/owner-dashboard"
         element={
-          <ProtectedRoute>
+          <ProtectedRoute  roles={["STORE_OWNER"]}>
             <OwnerDashboard />
           </ProtectedRoute>
         }
