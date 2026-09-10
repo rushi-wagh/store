@@ -19,6 +19,16 @@ export const userSchema = z.object({
   role: z.enum(["SYSTEM_ADMINISTRATOR", "STORE_OWNER", "USER"]).optional(),
 });
 
+export const loginSchema = z.object({
+  email: z.email("Please enter a valid email address"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .max(16, "Password must be less than 16 characters")
+    .regex(/[A-Z]/, "Password must contain an uppercase letter")
+    .regex(/[a-z]/, "Password must contain a lowercase letter"),
+});
+
 export const storeSchema = z.object({
   name: z
     .string()

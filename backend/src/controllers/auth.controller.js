@@ -2,6 +2,7 @@ import { hashPassword, comparePassword } from "../utils/password_utils.js";
 import {prisma} from "../db/db.js";
 import {userSchema, passwordSchema} from "../validations/validation.js";
 import { generateAccessToken } from "../utils/token.js";
+import{ loginSchema } from "../validations/validation.js";
 
 export const registerUser = async (req, res) => {
   try {
@@ -54,8 +55,7 @@ export const registerUser = async (req, res) => {
 
 export const loginUser = async (req, res) => {
   try {
-    const validateUser = userSchema.safeParse(req.body);
-
+    const validateUser = loginSchema.safeParse(req.body);
     if (!validateUser.success) {
       return res.status(400).json({
         message: "Invalid user data",
