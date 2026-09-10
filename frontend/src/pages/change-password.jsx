@@ -22,9 +22,6 @@ const ChangePassword = () => {
           oldPassword,
           newPassword,
         },
-        {
-          withCredentials: true,
-        },
       );
 
       console.log(response.data);
