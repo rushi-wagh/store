@@ -1,21 +1,12 @@
 import { prisma } from "../db/db.js";
-import { userSchema,storeSchema } from "../validations/validation.js";
+import { userSchema, storeSchema } from "../validations/validation.js";
 import { hashPassword } from "../utils/password_utils.js";
 
 export const getAllUsers = async (req, res) => {
   try {
-    const {
-      sortBy = "name",
-      order = "asc",
-    } = req.query;
+    const { sortBy = "name", order = "asc" } = req.query;
 
-    const allowedSortFields = [
-      "name",
-      "email",
-      "address",
-      "role",
-      "createdAt",
-    ];
+    const allowedSortFields = ["name", "email", "address", "role", "createdAt"];
 
     if (!allowedSortFields.includes(sortBy)) {
       return res.status(400).json({
@@ -50,7 +41,6 @@ export const getAllUsers = async (req, res) => {
       users,
     });
   } catch (error) {
-
     return res.status(500).json({
       message: "Internal server error",
     });
@@ -129,64 +119,83 @@ export const getUser = async (req, res) => {
   }
 };
 
-export const addStore = async(req,res) => {
+export const addStore = async (req, res) => {
   try {
     const validate = storeSchema.safeParse(req.body);
-     if (!validate.success) {
+    if (!validate.success) {
       return res.status(400).json({
         message: "Validation error",
         errors: validate.error.issues,
       });
     }
-    const{name,email,address,ownerId} = validate.data;
+    const { name, email, address, ownerId } = validate.data;
     const user = await prisma.user.findUnique({
-      where:{id:ownerId}
-    })
-    if(user.role !== "STORE_OWNER"){
+      where: { id: ownerId },
+    });
+    if (user.role !== "STORE_OWNER") {
       return res.status(400).json({
-        message: "User is not a store owner"
-      })
+        message: "User is not a store owner",
+      });
     }
     const existingStore = await prisma.store.findUnique({
-      where:{email}
-    })
-    if(existingStore){
+      where: { email },
+    });
+    if (existingStore) {
       return res.status(409).json({
-        message: "There exists store with this email"
-      })
+        message: "There exists store with this email",
+      });
     }
     const store = await prisma.store.create({
-      data:{
+      data: {
         name,
         email,
         address,
-        ownerId 
-      }
-    })  
+        ownerId,
+      },
+    });
     return res.status(201).json({
       message: "Store created successfully",
-      store
-    })
-
+      store,
+    });
   } catch (error) {
     return res.status(500).json({
-      message: "Internal Server Error"
-    })
+      message: "Internal Server Error",
+    });
   }
-}
+};
 
-export const getStores = async(req,res) => {
-  try{
-    const stores = await prisma.store.findMany();
+export const getStores = async (req, res) => {
+  try {
+    const stores = await prisma.store.findMany({
+      include: {
+        rating: {
+          select: {
+            rating: true,
+          },
+        },
+      },
+    });
+    const storesWithRating = stores.map((store) => {
+      const total = store.rating.reduce(
+        (sum, rating) => sum + rating.rating,
+        0,
+      );
+
+      const averageRating =
+        store.rating.length > 0 ? total / store.rating.length : 0;
+
+      return {
+        ...store,
+        rating: averageRating,
+      };
+    });
     return res.status(200).json({
       message: "Stores fetched successfully",
-      stores
-    })
-
-  }
-  catch(error){
+      stores: storesWithRating,
+    });
+  } catch (error) {
     return res.status(500).json({
-      message: "Internal Server Error"
-    })
+      message: "Internal Server Error",
+    });
   }
-}
+};
