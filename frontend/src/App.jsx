@@ -1,13 +1,19 @@
-import React from 'react'
-
-import AppRoutes from './routes/Approutes'
+import React, { useEffect } from "react";
+import AppRoutes from "./routes/Approutes";
+import useAuthStore from "./store/authStore";
 
 const App = () => {
+  const checkAuth = useAuthStore((state) => state.checkAuth);
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
   return (
     <>
-       <AppRoutes />
+      <AppRoutes />
     </>
-  )
-}
+  );
+};
 
-export default App
+export default App;

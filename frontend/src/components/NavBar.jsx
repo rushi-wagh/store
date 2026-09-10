@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import api from "../utils/api";
+import useAuthStore from "../store/authStore";
 
 const guestLinks = [
   { label: "Login", to: "/login" },
@@ -13,58 +13,16 @@ const authLinks = [
 ];
 
 const NavBar = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loading, setLoading] = useState(true);
-
+  const user = useAuthStore((state) => state.authUser);
+  const logout = useAuthStore((state) => state.logout);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        await api.get("/auth/", {
-          withCredentials: true,
-        });
-
-        setIsLoggedIn(true);
-      } catch (error) {
-        setIsLoggedIn(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    checkAuth();
-  }, []);
-
   const handleLogout = async () => {
-    try {
-      await api.post("/auth/logout", {}, {
-        withCredentials: true,
-      });
-
-      setIsLoggedIn(false);
-      navigate("/");
-    } catch (error) {
-      console.log(error);
-    }
+    await logout();
+    navigate("/");
   };
 
-  if (loading) {
-    return (
-      <nav className="w-full h-16 px-8 bg-[#0b0b0f] border-b border-[#2a2a35]">
-        <div className="max-w-7xl h-full mx-auto flex items-center">
-          <NavLink
-            to="/"
-            className="text-2xl font-bold text-[#e50914]"
-          >
-            MULYANKANAM
-          </NavLink>
-        </div>
-      </nav>
-    );
-  }
-
-  const links = isLoggedIn ? authLinks : guestLinks;
+  const links = user ? authLinks : guestLinks;
 
   return (
     <nav className="w-full h-16 px-8 bg-[#0b0b0f] border-b border-[#2a2a35]">
@@ -91,7 +49,7 @@ const NavBar = () => {
             </NavLink>
           ))}
 
-          {isLoggedIn && (
+          {user && (
             <button
               onClick={handleLogout}
               className="text-gray-400 hover:text-white"
