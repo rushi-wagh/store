@@ -176,6 +176,7 @@ FRONTEND_URL  frontends url
 Frontend
 Variable	Description
 VITE_API_BASE_URL	Backend API base URL
+```
 Main Application Flow
 
 <img width="1087" height="973" alt="Screenshot 2026-09-10 162044" src="https://github.com/user-attachments/assets/c208857d-f3d7-4517-b34f-dbfb2857b52b" />
