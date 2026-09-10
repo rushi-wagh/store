@@ -4,7 +4,12 @@ import { hashPassword } from "../utils/password_utils.js";
 
 export const getAllUsers = async (req, res) => {
   try {
-    const { sortBy = "name", order = "asc" } = req.query;
+    const {
+      search = "",
+      role = "",
+      sortBy = "name",
+      order = "asc",
+    } = req.query;
 
     const allowedSortFields = ["name", "email", "address", "role", "createdAt"];
 
@@ -21,6 +26,35 @@ export const getAllUsers = async (req, res) => {
     }
 
     const users = await prisma.user.findMany({
+      where: {
+        AND: [
+          search
+            ? {
+                OR: [
+                  {
+                    name: {
+                      contains: search,
+                      mode: "insensitive",
+                    },
+                  },
+                  {
+                    email: {
+                      contains: search,
+                      mode: "insensitive",
+                    },
+                  },
+                  {
+                    address: {
+                      contains: search,
+                      mode: "insensitive",
+                    },
+                  },
+                ],
+              }
+            : {},
+          role ? { role } : {},
+        ],
+      },
       select: {
         id: true,
         name: true,
@@ -41,6 +75,8 @@ export const getAllUsers = async (req, res) => {
       users,
     });
   } catch (error) {
+    console.log(error);
+
     return res.status(500).json({
       message: "Internal server error",
     });
@@ -92,25 +128,57 @@ export const addUser = async (req, res) => {
 export const getUser = async (req, res) => {
   try {
     const { id } = req.params;
+
     if (!id) {
       return res.status(404).json({
         message: "Id is required",
       });
     }
+
     const user = await prisma.user.findUnique({
-      where: { id: Number(req.params.id) },
+      where: {
+        id: Number(id),
+      },
       omit: {
         password: true,
       },
+      include: {
+        stores: {
+          include: {
+            rating: {
+              select: {
+                rating: true,
+              },
+            },
+          },
+        },
+      },
     });
+
     if (!user) {
       return res.status(404).json({
         message: "No user found with given id",
       });
     }
+
+    let averageRating = 0;
+
+    if (user.role === "STORE_OWNER" && user.stores.length > 0) {
+      const ratings = user.stores[0].rating;
+
+      if (ratings.length > 0) {
+        const total = ratings.reduce((sum, rating) => sum + rating.rating, 0);
+
+        averageRating = total / ratings.length;
+      }
+    }
+
     return res.status(200).json({
-      message: "User Succesfully fetched",
-      user,
+      message: "User Successfully fetched",
+      user: {
+        ...user,
+        averageRating,
+      },
     });
   } catch (error) {
     return res.status(500).json({
@@ -132,7 +200,7 @@ export const addStore = async (req, res) => {
     const user = await prisma.user.findUnique({
       where: { id: ownerId },
     });
-    if (user.role !== "STORE_OWNER") {
+    if (!user || user.role !== "STORE_OWNER") {
       return res.status(400).json({
         message: "User is not a store owner",
       });
@@ -166,7 +234,47 @@ export const addStore = async (req, res) => {
 
 export const getStores = async (req, res) => {
   try {
+    const { search = "", sortBy = "name", order = "asc" } = req.query;
+
+    const allowedSortFields = ["name", "email", "address", "createdAt"];
+
+    if (!allowedSortFields.includes(sortBy)) {
+      return res.status(400).json({
+        message: "Invalid sort field",
+      });
+    }
+
+    if (!["asc", "desc"].includes(order)) {
+      return res.status(400).json({
+        message: "Invalid sort order",
+      });
+    }
+
     const stores = await prisma.store.findMany({
+      where: search
+        ? {
+            OR: [
+              {
+                name: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+              {
+                email: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+              {
+                address: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+            ],
+          }
+        : {},
       include: {
         rating: {
           select: {
@@ -174,7 +282,11 @@ export const getStores = async (req, res) => {
           },
         },
       },
+      orderBy: {
+        [sortBy]: order,
+      },
     });
+
     const storesWithRating = stores.map((store) => {
       const total = store.rating.reduce(
         (sum, rating) => sum + rating.rating,
@@ -189,6 +301,7 @@ export const getStores = async (req, res) => {
         rating: averageRating,
       };
     });
+
     return res.status(200).json({
       message: "Stores fetched successfully",
       stores: storesWithRating,

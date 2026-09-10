@@ -5,6 +5,7 @@ import Register from "../pages/register";
 import ChangePassword from "../pages/change-password";
 import OwnerDashboard from "../pages/owner-dashboard";
 import ProtectedRoute from "../components/ProtectedRoute";
+import AdminDashboard from "../pages/admin-dashboard";
 
 
 const AppRoutes = () => {
@@ -26,7 +27,13 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      <Route path="/admin-dashboard" element={
+      <ProtectedRoute roles={["SYSTEM_ADMINISTRATOR"]}>
+        <AdminDashboard />
+      </ProtectedRoute>
+    } />  
     </Routes>
+    
   );
 };
 
