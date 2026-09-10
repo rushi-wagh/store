@@ -24,18 +24,19 @@ const Landing = () => {
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <button
               className="rounded-md bg-[#e50914] px-7 py-3 font-semibold
-                         text-white transition hover:bg-[#b80710]"
+                         text-white transition hover:bg-[#b80710]" onClick={() => window.location.href = "/register"}
             >
               Get Started
             </button>
 
             <button
-              className="rounded-md border border-gray-600 px-7 py-3
-                         font-semibold text-gray-200 transition
-                         hover:border-white hover:text-white"
+              className="rounded-md bg-[#e50914] px-7 py-3 font-semibold
+                         text-white transition hover:bg-[#b80710]" onClick={() => window.location.href = "/login"}
             >
               Login
             </button>
+
+           
           </div>
         </section>
       </main>

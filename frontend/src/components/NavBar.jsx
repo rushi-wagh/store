@@ -7,11 +7,6 @@ const guestLinks = [
   { label: "Register", to: "/register" },
 ];
 
-const authLinks = [
-  { label: "Home", to: "/" },
-  { label: "Dashboard", to: "/dashboard" },
-];
-
 const NavBar = () => {
   const user = useAuthStore((state) => state.authUser);
   const logout = useAuthStore((state) => state.logout);
@@ -22,7 +17,19 @@ const NavBar = () => {
     navigate("/");
   };
 
-  const links = user ? authLinks : guestLinks;
+  const dashboardPath =
+    user?.role === "SYSTEM_ADMINISTRATOR"
+      ? "/admin-dashboard"
+      : user?.role === "STORE_OWNER"
+      ? "/owner-dashboard"
+      : "/dashboard";
+
+  const links = user
+    ? [
+        { label: "Home", to: "/" },
+        { label: "Dashboard", to: dashboardPath },
+      ]
+    : guestLinks;
 
   return (
     <nav className="w-full h-16 px-8 bg-[#0b0b0f] border-b border-[#2a2a35]">
@@ -64,4 +71,3 @@ const NavBar = () => {
 };
 
 export default NavBar;
-

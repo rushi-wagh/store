@@ -102,7 +102,7 @@ const Register = () => {
             to="/"
             className="mt-6 block text-center text-gray-400"
           >
-            Back to Landing
+            Back to Home Page   
           </Link>
 
           <p className="mt-6 text-center text-gray-400">

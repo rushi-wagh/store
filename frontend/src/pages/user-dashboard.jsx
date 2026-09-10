@@ -62,6 +62,7 @@ const Dashboard = () => {
       }
 
       await getRatings(selectedStore.id);
+      await searchStores(search);
 
       setRating(5);
       setComment("");

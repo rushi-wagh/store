@@ -10,7 +10,6 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-
   const login = useAuthStore((state) => state.login);
 
   const handleSubmit = async (e) => {
@@ -24,7 +23,15 @@ const Login = () => {
         password,
       });
 
-      navigate("/");
+      const user = useAuthStore.getState().authUser;
+
+      if (user.role === "SYSTEM_ADMINISTRATOR") {
+        navigate("/admin-dashboard");
+      } else if (user.role === "STORE_OWNER") {
+        navigate("/owner-dashboard");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error) {
       const errors = error.response?.data?.errors;
 
@@ -73,7 +80,7 @@ const Login = () => {
           </form>
 
           <Link to="/" className="mt-6 block text-center text-gray-400">
-            Back to Landing
+            Back to Home Page
           </Link>
 
           <p className="mt-6 text-center text-gray-400">
