@@ -12,7 +12,6 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setError("");
     setLoading(true);
 
@@ -23,10 +22,15 @@ const Login = () => {
       });
 
       console.log(response.data);
-
       navigate("/");
     } catch (error) {
-      setError(error.response?.data?.message || "Login failed");
+      const errors = error.response?.data?.errors;
+
+      if (errors?.length) {
+        setError(errors[0].message);
+      } else {
+        setError(error.response?.data?.message || "Login failed");
+      }
     } finally {
       setLoading(false);
     }
@@ -81,7 +85,10 @@ const Login = () => {
 
           <p className="mt-6 text-center text-gray-400">
             Don't have an account yet?{" "}
-            <Link to="/register" className="text-[#e50914] hover:underline">
+            <Link
+              to="/register"
+              className="text-[#e50914] hover:underline"
+            >
               Register
             </Link>
           </p>
@@ -92,3 +99,4 @@ const Login = () => {
 };
 
 export default Login;
+
