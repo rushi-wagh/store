@@ -44,7 +44,15 @@ const AdminDashboard = () => {
     } else {
       getStores(sortBy, order, search);
     }
-  }, [activeTab, sortBy, order, search, role, getUsers, getStores]);
+  }, [
+    activeTab,
+    sortBy,
+    order,
+    search,
+    role,
+    getUsers,
+    getStores,
+  ]);
 
   const handleSort = (field) => {
     if (sortBy === field) {
@@ -117,7 +125,10 @@ const AdminDashboard = () => {
       <div className="max-w-7xl mx-auto px-8 py-10">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+            <h1 className="text-3xl font-bold">
+              Admin Dashboard
+            </h1>
+
             <p className="text-gray-400 mt-2">
               Manage users and stores
             </p>
@@ -143,12 +154,16 @@ const AdminDashboard = () => {
         <div className="grid grid-cols-3 gap-5 mb-8">
           <div className="bg-[#15151c] border border-[#2a2a35] rounded-xl p-5">
             <p className="text-gray-400">Users</p>
-            <p className="text-3xl font-bold mt-2">{users.length}</p>
+            <p className="text-3xl font-bold mt-2">
+              {users.length}
+            </p>
           </div>
 
           <div className="bg-[#15151c] border border-[#2a2a35] rounded-xl p-5">
             <p className="text-gray-400">Stores</p>
-            <p className="text-3xl font-bold mt-2">{stores.length}</p>
+            <p className="text-3xl font-bold mt-2">
+              {stores.length}
+            </p>
           </div>
 
           <div className="bg-[#15151c] border border-[#2a2a35] rounded-xl p-5">
@@ -213,7 +228,7 @@ const AdminDashboard = () => {
               <option value="">All Roles</option>
               <option value="USER">User</option>
               <option value="STORE_OWNER">Store Owner</option>
-              <option value="SYSTEM_ADMINISTRATOR">Admin</option>
+              <option value="ADMIN">Admin</option>
             </select>
           )}
         </div>
@@ -231,32 +246,45 @@ const AdminDashboard = () => {
                     onClick={() => handleSort("name")}
                     className="px-6 py-4 cursor-pointer"
                   >
-                    Name {sortBy === "name" && (order === "asc" ? "↑" : "↓")}
+                    Name{" "}
+                    {sortBy === "name" &&
+                      (order === "asc" ? "↑" : "↓")}
                   </th>
 
                   <th
                     onClick={() => handleSort("email")}
                     className="px-6 py-4 cursor-pointer"
                   >
-                    Email {sortBy === "email" && (order === "asc" ? "↑" : "↓")}
+                    Email{" "}
+                    {sortBy === "email" &&
+                      (order === "asc" ? "↑" : "↓")}
                   </th>
 
                   <th
                     onClick={() => handleSort("address")}
                     className="px-6 py-4 cursor-pointer"
                   >
-                    Address {sortBy === "address" && (order === "asc" ? "↑" : "↓")}
+                    Address{" "}
+                    {sortBy === "address" &&
+                      (order === "asc" ? "↑" : "↓")}
                   </th>
 
                   <th
                     onClick={() => handleSort("role")}
                     className="px-6 py-4 cursor-pointer"
                   >
-                    Role {sortBy === "role" && (order === "asc" ? "↑" : "↓")}
+                    Role{" "}
+                    {sortBy === "role" &&
+                      (order === "asc" ? "↑" : "↓")}
                   </th>
 
-                  <th className="px-6 py-4">Rating</th>
-                  <th className="px-6 py-4">Action</th>
+                  <th className="px-6 py-4">
+                    Rating
+                  </th>
+
+                  <th className="px-6 py-4">
+                    Action
+                  </th>
                 </tr>
               </thead>
 
@@ -266,24 +294,35 @@ const AdminDashboard = () => {
                     key={user.id}
                     className="border-b border-[#2a2a35] last:border-0"
                   >
-                    <td className="px-6 py-4">{user.name}</td>
+                    <td className="px-6 py-4">
+                      {user.name}
+                    </td>
+
                     <td className="px-6 py-4 text-gray-400">
                       {user.email}
                     </td>
+
                     <td className="px-6 py-4 text-gray-400">
                       {user.address}
                     </td>
+
                     <td className="px-6 py-4">
                       {user.role}
                     </td>
+
                     <td className="px-6 py-4">
                       {user.role === "STORE_OWNER"
-                        ? Number(user.averageRating || 0).toFixed(1)
+                        ? Number(
+                            user.averageRating || 0
+                          ).toFixed(1)
                         : "-"}
                     </td>
+
                     <td className="px-6 py-4">
                       <button
-                        onClick={() => handleViewUser(user.id)}
+                        onClick={() =>
+                          handleViewUser(user.id)
+                        }
                         className="text-[#e50914] hover:underline"
                       >
                         View
@@ -303,24 +342,32 @@ const AdminDashboard = () => {
                     onClick={() => handleSort("name")}
                     className="px-6 py-4 cursor-pointer"
                   >
-                    Name {sortBy === "name" && (order === "asc" ? "↑" : "↓")}
+                    Name{" "}
+                    {sortBy === "name" &&
+                      (order === "asc" ? "↑" : "↓")}
                   </th>
 
                   <th
                     onClick={() => handleSort("email")}
                     className="px-6 py-4 cursor-pointer"
                   >
-                    Email {sortBy === "email" && (order === "asc" ? "↑" : "↓")}
+                    Email{" "}
+                    {sortBy === "email" &&
+                      (order === "asc" ? "↑" : "↓")}
                   </th>
 
                   <th
                     onClick={() => handleSort("address")}
                     className="px-6 py-4 cursor-pointer"
                   >
-                    Address {sortBy === "address" && (order === "asc" ? "↑" : "↓")}
+                    Address{" "}
+                    {sortBy === "address" &&
+                      (order === "asc" ? "↑" : "↓")}
                   </th>
 
-                  <th className="px-6 py-4">Rating</th>
+                  <th className="px-6 py-4">
+                    Rating
+                  </th>
                 </tr>
               </thead>
 
@@ -330,15 +377,22 @@ const AdminDashboard = () => {
                     key={store.id}
                     className="border-b border-[#2a2a35] last:border-0"
                   >
-                    <td className="px-6 py-4">{store.name}</td>
+                    <td className="px-6 py-4">
+                      {store.name}
+                    </td>
+
                     <td className="px-6 py-4 text-gray-400">
                       {store.email}
                     </td>
+
                     <td className="px-6 py-4 text-gray-400">
                       {store.address}
                     </td>
+
                     <td className="px-6 py-4">
-                      {Number(store.rating || 0).toFixed(1)}
+                      {Number(
+                        store.rating || 0
+                      ).toFixed(1)}
                     </td>
                   </tr>
                 ))}
@@ -352,7 +406,9 @@ const AdminDashboard = () => {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center px-4">
           <div className="w-full max-w-md bg-[#15151c] border border-[#2a2a35] rounded-xl p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold">Add User</h2>
+              <h2 className="text-xl font-bold">
+                Add User
+              </h2>
 
               <button
                 onClick={() => setShowUserForm(false)}
@@ -362,7 +418,10 @@ const AdminDashboard = () => {
               </button>
             </div>
 
-            <form onSubmit={handleUserSubmit} className="space-y-4">
+            <form
+              onSubmit={handleUserSubmit}
+              className="space-y-4"
+            >
               <input
                 type="text"
                 placeholder="Name"
@@ -430,7 +489,9 @@ const AdminDashboard = () => {
                 className="w-full bg-[#0b0b0f] border border-[#2a2a35] rounded-lg px-4 py-3 outline-none"
               >
                 <option value="USER">User</option>
-                <option value="STORE_OWNER">Store Owner</option>
+                <option value="STORE_OWNER">
+                  Store Owner
+                </option>
                 <option value="ADMIN">Admin</option>
               </select>
 
@@ -449,7 +510,9 @@ const AdminDashboard = () => {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center px-4">
           <div className="w-full max-w-md bg-[#15151c] border border-[#2a2a35] rounded-xl p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold">Add Store</h2>
+              <h2 className="text-xl font-bold">
+                Add Store
+              </h2>
 
               <button
                 onClick={() => setShowStoreForm(false)}
@@ -459,7 +522,10 @@ const AdminDashboard = () => {
               </button>
             </div>
 
-            <form onSubmit={handleStoreSubmit} className="space-y-4">
+            <form
+              onSubmit={handleStoreSubmit}
+              className="space-y-4"
+            >
               <input
                 type="text"
                 placeholder="Store Name"
@@ -513,10 +579,15 @@ const AdminDashboard = () => {
                 className="w-full bg-[#0b0b0f] border border-[#2a2a35] rounded-lg px-4 py-3 outline-none"
                 required
               >
-                <option value="">Select Store Owner</option>
+                <option value="">
+                  Select Store Owner
+                </option>
 
                 {storeOwners.map((user) => (
-                  <option key={user.id} value={user.id}>
+                  <option
+                    key={user.id}
+                    value={user.id}
+                  >
                     {user.name} - {user.email}
                   </option>
                 ))}
@@ -537,7 +608,9 @@ const AdminDashboard = () => {
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center px-4">
           <div className="w-full max-w-md bg-[#15151c] border border-[#2a2a35] rounded-xl p-6">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold">User Details</h2>
+              <h2 className="text-xl font-bold">
+                User Details
+              </h2>
 
               <button
                 onClick={() => setSelectedUser(null)}
@@ -549,28 +622,39 @@ const AdminDashboard = () => {
 
             <div className="space-y-4">
               <div>
-                <p className="text-gray-500 text-sm">Name</p>
+                <p className="text-gray-500 text-sm">
+                  Name
+                </p>
                 <p>{selectedUser.name}</p>
               </div>
 
               <div>
-                <p className="text-gray-500 text-sm">Email</p>
+                <p className="text-gray-500 text-sm">
+                  Email
+                </p>
                 <p>{selectedUser.email}</p>
               </div>
 
               <div>
-                <p className="text-gray-500 text-sm">Address</p>
+                <p className="text-gray-500 text-sm">
+                  Address
+                </p>
                 <p>{selectedUser.address}</p>
               </div>
 
               <div>
-                <p className="text-gray-500 text-sm">Role</p>
+                <p className="text-gray-500 text-sm">
+                  Role
+                </p>
                 <p>{selectedUser.role}</p>
               </div>
 
               {selectedUser.role === "STORE_OWNER" && (
                 <div>
-                  <p className="text-gray-500 text-sm">Rating</p>
+                  <p className="text-gray-500 text-sm">
+                    Rating
+                  </p>
+
                   <p className="text-xl font-semibold">
                     {Number(
                       selectedUser.averageRating || 0

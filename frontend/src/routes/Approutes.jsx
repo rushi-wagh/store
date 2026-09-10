@@ -6,6 +6,7 @@ import ChangePassword from "../pages/change-password";
 import OwnerDashboard from "../pages/owner-dashboard";
 import ProtectedRoute from "../components/ProtectedRoute";
 import AdminDashboard from "../pages/admin-dashboard";
+import Dashboard from "../pages/user-dashboard";
 
 
 const AppRoutes = () => {
@@ -31,7 +32,12 @@ const AppRoutes = () => {
       <ProtectedRoute roles={["SYSTEM_ADMINISTRATOR"]}>
         <AdminDashboard />
       </ProtectedRoute>
-    } />  
+    } /> 
+    <Route path ="/dashboard" element={
+        <ProtectedRoute roles={["USER"]}>
+          <Dashboard />
+        </ProtectedRoute>
+      } />
     </Routes>
     
   );

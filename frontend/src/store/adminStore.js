@@ -6,55 +6,46 @@ const useAdminStore = create((set) => ({
   stores: [],
   isLoading: false,
 
-  getUsers: async (
-  sortBy = "name",
-  order = "asc",
-  search = "",
-  role = ""
-) => {
-  try {
-    const response = await api.get("/admin/users", {
-      params: {
-        sortBy,
-        order,
-        search,
-        role,
-      },
-      withCredentials: true,
-    });
+  getUsers: async (sortBy = "name", order = "asc", search = "", role = "") => {
+    try {
+      const response = await api.get("/admin/users", {
+        params: {
+          sortBy,
+          order,
+          search,
+          role,
+        },
+        withCredentials: true,
+      });
 
-    set({
-      users: response.data.users,
-    });
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-},
+      set({
+        users: response.data.users,
+      });
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  },
 
-getStores: async (
-  sortBy = "name",
-  order = "asc",
-  search = ""
-) => {
-  try {
-    const response = await api.get("/admin/stores", {
-      params: {
-        sortBy,
-        order,
-        search,
-      },
-      withCredentials: true,
-    });
+  getStores: async (sortBy = "name", order = "asc", search = "") => {
+    try {
+      const response = await api.get("/admin/stores", {
+        params: {
+          sortBy,
+          order,
+          search,
+        },
+        withCredentials: true,
+      });
 
-    set({
-      stores: response.data.stores,
-    });
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-},
+      set({
+        stores: response.data.stores,
+      });
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  },
 
   addUser: async (data) => {
     try {
@@ -93,6 +84,23 @@ getStores: async (
       });
 
       return response.data.user;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  },
+  getStoreOwners: async () => {
+    try {
+      const response = await api.get("/admin/users", {
+        params: {
+          role: "STORE_OWNER",
+          sortBy: "name",
+          order: "asc",
+        },
+        withCredentials: true,
+      });
+
+      return response.data.users;
     } catch (error) {
       console.log(error);
       throw error;

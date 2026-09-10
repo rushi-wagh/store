@@ -13,7 +13,9 @@ const useRatingStore = create((set) => ({
         withCredentials: true,
       });
 
-      set({ ratings: response.data.ratings });
+      set({
+        ratings: response.data.ratings,
+      });
     } catch (error) {
       console.log(error);
     } finally {
@@ -30,6 +32,8 @@ const useRatingStore = create((set) => ({
       set((state) => ({
         ratings: [...state.ratings, response.data.rating],
       }));
+
+      return response.data.rating;
     } catch (error) {
       console.log(error);
       throw error;
@@ -38,13 +42,19 @@ const useRatingStore = create((set) => ({
 
   updateRating: async (ratingId, data) => {
     try {
-      const response = await api.put(`/rating/${ratingId}`, data, {
-        withCredentials: true,
-      });
+      const response = await api.put(
+        `/rating/${ratingId}`,
+        data,
+        {
+          withCredentials: true,
+        }
+      );
 
       set((state) => ({
         ratings: state.ratings.map((rating) =>
-          rating.id === ratingId ? response.data.rating : rating
+          rating.id === ratingId
+            ? response.data.rating
+            : rating
         ),
       }));
     } catch (error) {

@@ -45,7 +45,6 @@ export const addRating = async (req, res) => {
       rating: newRating,
     });
   } catch (error) {
-
     return res.status(500).json({
       message: "Internal Server Error",
     });
@@ -95,7 +94,12 @@ export const getRatingsForStore = async (req, res) => {
         storeId,
       },
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
       orderBy: {
         [sortBy]: order,
@@ -107,7 +111,6 @@ export const getRatingsForStore = async (req, res) => {
       ratings,
     });
   } catch (error) {
-
     return res.status(500).json({
       message: "Internal Server Error",
     });
@@ -116,7 +119,7 @@ export const getRatingsForStore = async (req, res) => {
 
 export const updateRating = async (req, res) => {
   try {
-     const ratingId = Number(req.params.ratingId);
+    const ratingId = Number(req.params.ratingId);
     const validate = ratingSchema.safeParse(req.body);
     if (!validate.success) {
       return res.status(400).json({

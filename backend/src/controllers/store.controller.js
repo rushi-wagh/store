@@ -87,39 +87,60 @@ export const getStoreOwnerDashboard = async (req, res) => {
 
 export const searchStores = async (req, res) => {
   try {
-    const { search } = req.query;
-
-    if (!search || search.trim() === "") {
-      return res.status(400).json({
-        message: "Search query is required",
-      });
-    }
+    const { search = "" } = req.query;
 
     const stores = await prisma.store.findMany({
-      where: {
-        OR: [
-          {
-            name: {
-              contains: search,
-              mode: "insensitive",
-            },
+      where: search.trim()
+        ? {
+            OR: [
+              {
+                name: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+              {
+                address: {
+                  contains: search,
+                  mode: "insensitive",
+                },
+              },
+            ],
+          }
+        : {},
+      include: {
+        rating: {
+          select: {
+            rating: true,
           },
-          {
-            address: {
-              contains: search,
-              mode: "insensitive",
-            },
-          },
-        ],
+        },
       },
+    });
+
+    const storesWithRating = stores.map((store) => {
+      const total = store.rating.reduce(
+        (sum, item) => sum + item.rating,
+        0
+      );
+
+      const averageRating =
+        store.rating.length > 0
+          ? total / store.rating.length
+          : 0;
+
+      return {
+        ...store,
+        rating: averageRating,
+        ratingCount: store.rating.length,
+      };
     });
 
     return res.status(200).json({
       message: "Stores retrieved successfully",
-      stores,
+      stores: storesWithRating,
     });
   } catch (error) {
-  
+    console.log(error);
 
     return res.status(500).json({
       message: "Internal Server Error",
